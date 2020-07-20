@@ -19,15 +19,19 @@ type image struct {
 func initImages() error {
 	var images []image
 	err := db.Select(&images, "SELECT * FROM images")
+	fmt.Println("DEBUG: INIT IMAGES")
 
 	if err != nil {
+		fmt.Println("ERROR: ", err)
 		return err
 	}
 
 	for _, v := range images {
 		if err = writeAvatarIcon(v.Name, v.Data); err != nil {
+			fmt.Println("ERROR: ", err)
 			return err
 		}
 	}
+	fmt.Println("DEBUG: INIT IMAGES DONE")
 	return nil
 }
