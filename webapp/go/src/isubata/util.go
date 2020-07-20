@@ -18,7 +18,7 @@ type image struct {
 
 func initImages() error {
 	var images []image
-	err := db.Select(&images, "SELECT * FROM images")
+	err := db.Select(&images, "SELECT * FROM image")
 	fmt.Println("DEBUG: INIT IMAGES")
 
 	if err != nil {
