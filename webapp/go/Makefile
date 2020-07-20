@@ -1,8 +1,3 @@
-GOPATH := ${PWD}
-export GOPATH
-
 build:
-	go build -v isubata
-
-vet:
-	go vet ./src/isubata/...
+	cd src/isubata; go build -v isubata
+	mv src/isubata/isubata .
