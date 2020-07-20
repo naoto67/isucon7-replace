@@ -114,16 +114,6 @@ func addMessage(channelID, userID int64, content string) (int64, error) {
 	return res.LastInsertId()
 }
 
-type Message struct {
-	ID        int64     `db:"id"`
-	ChannelID int64     `db:"channel_id"`
-	UserID    int64     `db:"user_id"`
-	Content   string    `db:"content"`
-	CreatedAt time.Time `db:"created_at"`
-
-	User *User
-}
-
 func queryMessages(chanID, lastID int64) ([]Message, error) {
 	msgs := []Message{}
 	err := db.Select(&msgs, "SELECT * FROM message WHERE id > ? AND channel_id = ? ORDER BY id DESC LIMIT 100",
@@ -504,10 +494,6 @@ func getHistory(c echo.Context) error {
 
 	messages, err := scanMessagesWithUser(db.Query("SELECT * FROM message INNER JOIN user ON user.id = message.user_id WHERE message.channel_id = ? ORDER BY message.id DESC LIMIT ? OFFSET ?",
 		chID, N, (page-1)*N))
-
-	err = db.Select(&messages,
-		"SELECT * FROM message WHERE channel_id = ? ORDER BY id DESC LIMIT ? OFFSET ?",
-		chID, N, (page-1)*N)
 	if err != nil {
 		return err
 	}

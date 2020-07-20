@@ -40,7 +40,7 @@ func initImages() error {
 func jsonifyMessage(m Message) (map[string]interface{}, error) {
 	r := make(map[string]interface{})
 	r["id"] = m.ID
-	r["user"] = m.User
+	r["user"] = *m.User
 	r["date"] = m.CreatedAt.Format("2006/01/02 15:04:05")
 	r["content"] = m.Content
 	return r, nil
