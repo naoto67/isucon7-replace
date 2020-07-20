@@ -11,13 +11,13 @@ func writeAvatarIcon(filename string, data []byte) error {
 	return ioutil.WriteFile(fmt.Sprintf("%s%s", PUBLIC_DIR, filename), data, 0666)
 }
 
-type image struct {
+type Image struct {
 	Name string `db:"name"`
 	Data []byte `db:"data"`
 }
 
 func initImages() error {
-	var images []image
+	var images []Image
 	err := db.Select(&images, "SELECT * FROM image")
 	fmt.Println("DEBUG: INIT IMAGES")
 
