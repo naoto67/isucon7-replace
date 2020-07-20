@@ -12,6 +12,7 @@ func writeAvatarIcon(filename string, data []byte) error {
 }
 
 type Image struct {
+	ID   int64  `json:"-" db:"id"`
 	Name string `db:"name"`
 	Data []byte `db:"data"`
 }
