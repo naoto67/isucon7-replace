@@ -415,6 +415,7 @@ func fetchUnread(c echo.Context) error {
 				chID, lastID)
 		} else {
 			cnt, err = FetchMessageCount(chID)
+			fmt.Println("FETCH_UNREAD", cnt, err)
 		}
 		if err != nil {
 			return err
