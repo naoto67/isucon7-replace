@@ -370,7 +370,7 @@ func getMessage(c echo.Context) error {
 	}
 
 	if len(messages) > 0 {
-		err := AddHaveReadCache(HaveRead{
+		err := AddHaveRead(HaveRead{
 			UserID:    userID,
 			ChannelID: chanID,
 			MessageID: messages[0].ID,
@@ -391,37 +391,15 @@ func fetchUnread(c echo.Context) error {
 
 	time.Sleep(time.Second)
 
-	channels, err := queryChannels()
+	mc, err := FetchUnreadMessageCount(userID)
 	if err != nil {
 		return err
 	}
-
 	resp := []map[string]interface{}{}
-
-	for _, chID := range channels {
-		lastID, err := queryHaveRead(userID, chID)
-		if err != nil {
-			return err
-		}
-
-		var cnt int64
-		if lastID > 0 {
-			fmt.Println("FETCH_UNREAD: lastID is not 0")
-			err = db.Get(&cnt,
-				"SELECT COUNT(*) as cnt FROM message WHERE channel_id = ? AND ? < id",
-				chID, lastID)
-		} else {
-			fmt.Println("FETCH_UNREAD: lastID is 0")
-			err = db.Get(&cnt,
-				"SELECT COUNT(*) as cnt FROM message WHERE channel_id = ?",
-				chID)
-		}
-		if err != nil {
-			return err
-		}
+	for _, v := range mc {
 		r := map[string]interface{}{
-			"channel_id": chID,
-			"unread":     cnt}
+			"channel_id": v.ChannelID,
+			"unread":     v.Count}
 		resp = append(resp, r)
 	}
 
