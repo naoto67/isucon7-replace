@@ -209,6 +209,7 @@ func getInitialize(c echo.Context) error {
 	cache.FlushAll()
 	initImages()
 	initChannels()
+	initMessageCount()
 	return c.String(204, "")
 }
 
