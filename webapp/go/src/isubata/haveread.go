@@ -71,11 +71,12 @@ func FetchUnreadMessageCount(userID int64) (map[string]MessageCount, error) {
 	}
 
 	var mc2 []MessageCount
-	err = db.Select(&mc2, "SELECT COUNT(*) as cnt, m.channel_id FROM message m INNER JOIN haveread h ON h.channel_id = m.channel_id AND h.message_id < m.id AND h.user_id = ? GROUP BY m.channel_id", userID)
+	err = db.Select(&mc2, "SELECT COUNT(*) as cnt, m.channel_id FROM message m INNER JOIN haveread h ON h.channel_id = m.channel_id AND h.message_id <= m.id AND h.user_id = ? GROUP BY m.channel_id", userID)
 	if err != nil {
 		return nil, err
 	}
 	for _, v := range mc2 {
+		v.Count--
 		resp[strconv.Itoa(int(v.ChannelID))] = v
 	}
 	fmt.Println(mc2)
