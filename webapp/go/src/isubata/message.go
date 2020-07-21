@@ -61,6 +61,6 @@ func AddMessageCache(m Message) error {
 }
 
 func fetchMessageCount(chID, lastID int64) (int64, error) {
-	key := fmt.Sprintf("%s:%d", MESSAGE_SET)
+	key := fmt.Sprintf("%s:%d", MESSAGE_SET, chID)
 	return cache.ZCount(key, lastID+1, "+inf")
 }
