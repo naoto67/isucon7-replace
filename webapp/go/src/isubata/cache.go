@@ -88,6 +88,7 @@ func (cache *Cache) ZAdd(key string, rank int64, value interface{}) error {
 func (cache *Cache) ZCount(key string, min, max interface{}) (int64, error) {
 	conn := cache.RedisPool.Get()
 	res, err := conn.Do("ZCOUNT", key, min, max)
+	fmt.Println("DEBUG: ", res)
 	fmt.Println("ERROR: ", err)
 	return redis.Int64(res, err)
 }
