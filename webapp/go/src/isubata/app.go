@@ -81,6 +81,8 @@ func init() {
 	db.SetMaxOpenConns(20)
 	db.SetConnMaxLifetime(5 * time.Minute)
 	log.Printf("Succeeded to connect db.")
+
+	NewCache("localhost:6379", "localhost:11211")
 }
 
 type User struct {
@@ -201,6 +203,7 @@ func getInitialize(c echo.Context) error {
 	db.MustExec("DELETE FROM message WHERE id > 10000")
 	db.MustExec("DELETE FROM haveread")
 	initImages()
+	initChannels()
 	return c.String(204, "")
 }
 
@@ -213,14 +216,6 @@ func getIndex(c echo.Context) error {
 	return c.Render(http.StatusOK, "index", map[string]interface{}{
 		"ChannelID": nil,
 	})
-}
-
-type ChannelInfo struct {
-	ID          int64     `db:"id"`
-	Name        string    `db:"name"`
-	Description string    `db:"description"`
-	UpdatedAt   time.Time `db:"updated_at"`
-	CreatedAt   time.Time `db:"created_at"`
 }
 
 func getChannel(c echo.Context) error {
@@ -384,12 +379,6 @@ func getMessage(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, response)
-}
-
-func queryChannels() ([]int64, error) {
-	res := []int64{}
-	err := db.Select(&res, "SELECT id FROM channel")
-	return res, err
 }
 
 func queryHaveRead(userID, chID int64) (int64, error) {
@@ -585,13 +574,15 @@ func postAddChannel(c echo.Context) error {
 		return ErrBadReqeust
 	}
 
+	now := time.Now()
 	res, err := db.Exec(
-		"INSERT INTO channel (name, description, updated_at, created_at) VALUES (?, ?, NOW(), NOW())",
-		name, desc)
+		"INSERT INTO channel (name, description, updated_at, created_at) VALUES (?, ?, ?, ?)",
+		name, desc, now, now)
 	if err != nil {
 		return err
 	}
 	lastID, _ := res.LastInsertId()
+	AddChannelCache(ChannelInfo{ID: lastID, Name: name, Description: desc, CreatedAt: now, UpdatedAt: now})
 	return c.Redirect(http.StatusSeeOther,
 		fmt.Sprintf("/channel/%v", lastID))
 }
