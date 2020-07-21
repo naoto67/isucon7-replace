@@ -33,7 +33,7 @@ func addMessage(channelID, userID int64, content string) (int64, error) {
 	if err != nil {
 		return 0, err
 	}
-	err = AddMessageCache(Message{
+	go AddMessageCache(Message{
 		ID:        lastID,
 		ChannelID: channelID,
 		UserID:    userID,
