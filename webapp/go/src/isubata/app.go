@@ -229,7 +229,7 @@ func getChannel(c echo.Context) error {
 		return err
 	}
 	channels := []ChannelInfo{}
-	err = db.Select(&channels, "SELECT * FROM channel ORDER BY id")
+	channels, err = fetchChannels()
 	if err != nil {
 		return err
 	}
@@ -480,7 +480,7 @@ func getHistory(c echo.Context) error {
 	}
 
 	channels := []ChannelInfo{}
-	err = db.Select(&channels, "SELECT * FROM channel ORDER BY id")
+	channels, err = fetchChannels()
 	if err != nil {
 		return err
 	}
@@ -502,7 +502,7 @@ func getProfile(c echo.Context) error {
 	}
 
 	channels := []ChannelInfo{}
-	err = db.Select(&channels, "SELECT * FROM channel ORDER BY id")
+	channels, err = fetchChannels()
 	if err != nil {
 		return err
 	}
@@ -533,7 +533,7 @@ func getAddChannel(c echo.Context) error {
 	}
 
 	channels := []ChannelInfo{}
-	err = db.Select(&channels, "SELECT * FROM channel ORDER BY id")
+	channels, err = fetchChannels()
 	if err != nil {
 		return err
 	}
