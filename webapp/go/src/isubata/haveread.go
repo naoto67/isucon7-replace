@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"time"
-
-	"google.golang.org/appengine/memcache"
 )
 
 type HaveRead struct {
@@ -39,7 +37,8 @@ func FetchHaveReadCache(userID, chID int64) (*HaveRead, error) {
 func queryHaveRead(userID, chID int64) (int64, error) {
 	haveread, err := FetchHaveReadCache(userID, chID)
 
-	if err != memcache.ErrCacheMiss {
+	if err != nil {
+		fmt.Println("ERROR: ", err)
 		return 0, nil
 	}
 	return haveread.MessageID, nil
