@@ -39,10 +39,8 @@ func FetchHaveReadCache(userID, chID int64) (*HaveRead, error) {
 func queryHaveRead(userID, chID int64) (int64, error) {
 	haveread, err := FetchHaveReadCache(userID, chID)
 
-	if err == memcache.ErrCacheMiss {
+	if err != memcache.ErrCacheMiss {
 		return 0, nil
-	} else if err != nil {
-		return 0, err
 	}
 	return haveread.MessageID, nil
 }
