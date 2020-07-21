@@ -193,7 +193,6 @@ func getInitialize(c echo.Context) error {
 	db.MustExec("DELETE FROM message WHERE id > 10000")
 	db.MustExec("DELETE FROM haveread")
 	cache.FlushAll()
-	initImages()
 	initChannels()
 	initMessagesCache()
 	return c.String(204, "")
