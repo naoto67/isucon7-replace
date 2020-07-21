@@ -19,8 +19,6 @@ var cache *Cache
 func NewCache(redisServer, memcacheServer string) {
 	cache = &Cache{}
 	cache.RedisPool = &redis.Pool{
-		MaxIdle:     6,
-		MaxActive:   3,
 		IdleTimeout: 240 * time.Second,
 		Dial:        func() (redis.Conn, error) { return redis.Dial("tcp", redisServer) },
 	}
@@ -64,6 +62,12 @@ func (cache *Cache) LPush(key string, value interface{}) error {
 	data, _ := json.Marshal(value)
 	conn := cache.RedisPool.Get()
 	_, err := conn.Do("LPUSH", key, data)
+	return err
+}
+
+func (cache *Cache) LBulkPush(key string, bytes [][]byte) error {
+	conn := cache.RedisPool.Get()
+	_, err := conn.Do("LPUSH", key, bytes)
 	return err
 }
 

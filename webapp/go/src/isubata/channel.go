@@ -38,13 +38,14 @@ func initChannels() error {
 	if err != nil {
 		return err
 	}
-
+	bytes := make([][]byte, len(channels))
 	for _, v := range channels {
-		if err := AddChannelCache(v); err != nil {
-			return err
-		}
+		data, _ := json.Marshal(v)
+		bytes = append(bytes, data)
 	}
-	return nil
+
+	err = cache.LBulkPush(CHANNEL_INDEX, bytes)
+	return err
 }
 
 func fetchChannels() ([]ChannelInfo, error) {
