@@ -54,9 +54,9 @@ func fetchChannels() ([]ChannelInfo, error) {
 		return nil, err
 	}
 	var channels []ChannelInfo
-	for _, b := range data {
+	for i := range data {
 		var ch ChannelInfo
-		err = json.Unmarshal(b, &ch)
+		err = json.Unmarshal(data[i], &ch)
 		if err != nil {
 			fmt.Println("WARN: ", err)
 			return nil, err
