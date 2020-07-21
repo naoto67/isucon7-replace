@@ -113,6 +113,10 @@ func addMessage(channelID, userID int64, content string) (int64, error) {
 	if err != nil {
 		return 0, err
 	}
+	err = IncrMessageCount(channelID)
+	if err != nil {
+		fmt.Println("DEBUG: ", err)
+	}
 	return res.LastInsertId()
 }
 
@@ -406,15 +410,11 @@ func fetchUnread(c echo.Context) error {
 
 		var cnt int64
 		if lastID > 0 {
-			fmt.Println("FETCH_UNREAD: lastID is not 0")
 			err = db.Get(&cnt,
 				"SELECT COUNT(*) as cnt FROM message WHERE channel_id = ? AND ? < id",
 				chID, lastID)
 		} else {
-			fmt.Println("FETCH_UNREAD: lastID is 0")
-			err = db.Get(&cnt,
-				"SELECT COUNT(*) as cnt FROM message WHERE channel_id = ?",
-				chID)
+			cnt, err = FetchMessageCount(chID)
 		}
 		if err != nil {
 			return err

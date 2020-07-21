@@ -44,6 +44,11 @@ func (cache *Cache) Set(key string, value interface{}) error {
 	return cache.MemcacheClient.Set(&memcache.Item{Key: key, Value: data})
 }
 
+func (cache *Cache) Increment(key string, value uint64) error {
+	_, err := cache.MemcacheClient.Increment(key, value)
+	return err
+}
+
 func (cache *Cache) Get(key string) ([]byte, error) {
 	item, err := cache.MemcacheClient.Get(key)
 	if err != nil {
