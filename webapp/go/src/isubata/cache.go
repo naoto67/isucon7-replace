@@ -17,6 +17,7 @@ type Cache struct {
 var cache *Cache
 
 func NewCache(redisServer, memcacheServer string) {
+	cache = &Cache{}
 	cache.RedisPool = &redis.Pool{
 		MaxIdle:     6,
 		MaxActive:   3,
