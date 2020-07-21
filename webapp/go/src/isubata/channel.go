@@ -38,13 +38,10 @@ func initChannels() error {
 	if err != nil {
 		return err
 	}
-	bytes := make([][]byte, len(channels))
 	for _, v := range channels {
-		data, _ := json.Marshal(v)
-		bytes = append(bytes, data)
+		AddChannelCache(v)
 	}
 
-	err = cache.LBulkPush(CHANNEL_INDEX, bytes)
 	return err
 }
 
