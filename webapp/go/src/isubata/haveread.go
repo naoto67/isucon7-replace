@@ -24,11 +24,9 @@ func AddHaveRead(haveread HaveRead) error {
 		" VALUES (?, ?, ?, NOW(), NOW())"+
 		" ON DUPLICATE KEY UPDATE message_id = ?, updated_at = NOW()",
 		haveread.UserID, haveread.ChannelID, haveread.MessageID, haveread.MessageID)
-	if err != nil {
-		return err
-	}
-	key := fmt.Sprintf("%s:%s:%s", HAVEREAD_PREFIX, haveread.UserID, haveread.ChannelID)
-	return cache.Set(key, haveread)
+	return err
+	// key := fmt.Sprintf("%s:%s:%s", HAVEREAD_PREFIX, haveread.UserID, haveread.ChannelID)
+	// return cache.Set(key, haveread)
 }
 
 func FetchHaveReadCache(userID, chID int64) (*HaveRead, error) {

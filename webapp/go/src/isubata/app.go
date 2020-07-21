@@ -389,7 +389,7 @@ func fetchUnread(c echo.Context) error {
 		return c.NoContent(http.StatusForbidden)
 	}
 
-	time.Sleep(time.Second)
+	time.Sleep(time.Millisecond * 0.5)
 
 	mc, err := FetchUnreadMessageCount(userID)
 	if err != nil {
