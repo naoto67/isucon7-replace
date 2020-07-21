@@ -22,7 +22,7 @@ func queryChannels() ([]int64, error) {
 	res := []int64{}
 	channels, err := fetchChannels()
 	if err != nil {
-		fmt.Println("DEBUG: use mysql data in queryChannels")
+		fmt.Println("DEBUG: use mysql data in queryChannels", err)
 		err = db.Select(&res, "SELECT id FROM channel")
 	} else {
 		for _, v := range channels {
