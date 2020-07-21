@@ -12,7 +12,46 @@ type Message struct {
 	User *User
 }
 
+const (
+	MESSAGE_SET = "m_set"
+)
+
 func queryMessagesWithUser(chanID, lastID int64) ([]Message, error) {
 	return scanMessagesWithUser(db.Query("SELECT * FROM message INNER JOIN user ON user.id = message.user_id WHERE message.id > ? AND message.channel_id = ? ORDER BY message.id DESC LIMIT 100",
 		lastID, chanID))
+}
+
+func addMessage(channelID, userID int64, content string) (int64, error) {
+	now := time.Now()
+	res, err := db.Exec(
+		"INSERT INTO message (channel_id, user_id, content, created_at) VALUES (?, ?, ?, ?)",
+		channelID, userID, content, now)
+	if err != nil {
+		return 0, err
+	}
+	lastID, err := res.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+	err = AddMessageCache(Message{
+		ID:        lastID,
+		ChannelID: channelID,
+		UserID:    userID,
+		Content:   content,
+		CreatedAt: now,
+	})
+	return lastID, err
+}
+
+func initMessagesCache() {
+	var msgs []Message
+	db.Select(&msgs, "SELECT * FROM message")
+	for _, v := range msgs {
+		AddMessageCache(v)
+	}
+	return
+}
+
+func AddMessageCache(m Message) error {
+	return cache.ZAdd(MESSAGE_SET, m.ID, m)
 }

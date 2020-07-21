@@ -76,3 +76,10 @@ func (cache *Cache) LFetchAll(key string) ([][]byte, error) {
 	data, err := redis.ByteSlices(conn.Do("LRANGE", key, 0, -1))
 	return data, err
 }
+
+func (cache *Cache) ZAdd(key string, rank int64, value interface{}) error {
+	conn := cache.RedisPool.Get()
+	data, _ := json.Marshal(value)
+	_, err := conn.Do("ZADD", key, rank, data)
+	return err
+}

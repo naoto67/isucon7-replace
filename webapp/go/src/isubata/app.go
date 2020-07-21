@@ -106,16 +106,6 @@ func getUser(userID int64) (*User, error) {
 	return &u, nil
 }
 
-func addMessage(channelID, userID int64, content string) (int64, error) {
-	res, err := db.Exec(
-		"INSERT INTO message (channel_id, user_id, content, created_at) VALUES (?, ?, ?, NOW())",
-		channelID, userID, content)
-	if err != nil {
-		return 0, err
-	}
-	return res.LastInsertId()
-}
-
 func queryMessages(chanID, lastID int64) ([]Message, error) {
 	msgs := []Message{}
 	err := db.Select(&msgs, "SELECT * FROM message WHERE id > ? AND channel_id = ? ORDER BY id DESC LIMIT 100",
@@ -205,6 +195,7 @@ func getInitialize(c echo.Context) error {
 	cache.FlushAll()
 	initImages()
 	initChannels()
+	initMessagesCache()
 	return c.String(204, "")
 }
 
