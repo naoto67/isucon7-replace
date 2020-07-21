@@ -1,6 +1,9 @@
 package main
 
-import "time"
+import (
+	"fmt"
+	"time"
+)
 
 type Message struct {
 	ID        int64     `db:"id"`
@@ -33,7 +36,7 @@ func addMessage(channelID, userID int64, content string) (int64, error) {
 	if err != nil {
 		return 0, err
 	}
-	go AddMessageCache(Message{
+	err = AddMessageCache(Message{
 		ID:        lastID,
 		ChannelID: channelID,
 		UserID:    userID,
@@ -53,5 +56,11 @@ func initMessagesCache() {
 }
 
 func AddMessageCache(m Message) error {
-	return cache.ZAdd(MESSAGE_SET, m.ID, m)
+	key := fmt.Sprintf("%s:%s", MESSAGE_SET, m.ChannelID)
+	return cache.ZAdd(key, m.ID, m)
+}
+
+func fetchMessageCount(chID, lastID int64) (int64, error) {
+	key := fmt.Sprintf("%s:%s", MESSAGE_SET)
+	return cache.ZCount(key, lastID+1, "+inf")
 }
