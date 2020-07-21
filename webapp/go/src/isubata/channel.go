@@ -64,5 +64,10 @@ func fetchChannels() ([]ChannelInfo, error) {
 }
 
 func AddChannelCache(ch ChannelInfo) error {
-	return cache.LPush(CHANNEL_INDEX, ch)
+	err := cache.LPush(CHANNEL_INDEX, ch)
+	if err != nil {
+		return err
+	}
+	key := fmt.Sprintf("%s:%s", MESSAGE_COUNT_PREFIX, ch.ID)
+	return cache.Set(key, 0)
 }
